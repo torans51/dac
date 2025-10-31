@@ -14,6 +14,7 @@
 #define DAC_H__
 
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,6 +31,10 @@ dac dac_new(char *s);
 size_t dac_len(dac *s);
 char *dac_to_cstr(dac *s);
 bool dac_contains(dac *s, dac *search);
+bool dac_contains_str(dac *s, char *search);
+// TODO:
+// void dac_replace(dac *s, dac *r);
+// void dac_replace_all(dac *s, dac *r);
 void dac_append(dac *dest, dac *str);
 void dac_append_str(dac *dest, char *str);
 void dac_append_many(dac *dest, dac items[], size_t items_count);
@@ -61,14 +66,19 @@ size_t dac_len(dac *s) { return s->count - 1; }
 char *dac_to_cstr(dac *s) { return s->ptr; }
 
 bool dac_contains(dac *s, dac *search) {
+  return dac_contains_str(s, dac_to_cstr(search)); 
+}
+
+bool dac_contains_str(dac *s, char *search) {
   for (size_t i = 0; i < s->count; i++) {
     size_t j = 0;
-    if (s->ptr[i] == search->ptr[j]) {
-      while (i + j < dac_len(s) && j < dac_len(search) &&
-             s->ptr[i + j] == search->ptr[j]) {
+    size_t search_len = strlen(search);
+    if (s->ptr[i] == search[j]) {
+      while (i + j < dac_len(s) && j < search_len &&
+             s->ptr[i + j] == search[j]) {
         j++;
       }
-      if (j == dac_len(search)) {
+      if (j == search_len) {
         return true;
       }
     }
@@ -77,11 +87,7 @@ bool dac_contains(dac *s, dac *search) {
 }
 
 void dac_append(dac *dest, dac *item) {
-  size_t new_count = dac_len(dest) + dac_len(item) + 1;
-  dac_reserve_capacity(dest, new_count);
-  // copy src string at the NULL terminator of dest string
-  memcpy(dest->ptr + dac_len(dest), item->ptr, item->count);
-  dest->count = new_count;
+  dac_append_str(dest, dac_to_cstr(item));
 }
 
 void dac_append_str(dac *dest, char *str) {

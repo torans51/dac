@@ -104,6 +104,19 @@ void test_dac_contains() {
   SUCCESS();
 }
 
+void test_dac_contains_str() {
+  dac s = dac_new("Hello world worldd 1234");
+  char *search1 = "ldd 1234";
+  char *search2 = "dd 12345";
+  char *search3 = "Hello world 12345";
+  char *search4 = "worldd";
+  BOOL_EQ(dac_contains_str(&s, search1), true);
+  BOOL_EQ(dac_contains_str(&s, search2), false);
+  BOOL_EQ(dac_contains_str(&s, search3), false);
+  BOOL_EQ(dac_contains_str(&s, search4), true);
+  SUCCESS();
+}
+
 void test_dac_append() {
   dac s1 = dac_new("hello");
   dac s2 = dac_new("world");
@@ -153,6 +166,7 @@ int main() {
 
   test_dac_new();
   test_dac_contains();
+  test_dac_contains_str();
   test_dac_append();
   test_dac_append_str();
   test_dac_append_many();
