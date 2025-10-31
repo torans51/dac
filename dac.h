@@ -19,7 +19,7 @@
 #include <string.h>
 
 typedef struct {
-  char *ptr;       // pointer to the first char of the c string. NULL terminator is included
+  char *ptr; // pointer to the first char of the c string. NULL terminator is included
   size_t count;    // len of the c string plus NULL terminator
   size_t capacity; // memory allocated >= len
 } dac;
@@ -29,6 +29,7 @@ dac dac_new(char *s);
 size_t dac_len(dac *s);
 char *dac_to_cstr(dac *s);
 void dac_append(dac *dest, dac *str);
+void dac_append_str(dac *dest, char *str);
 void dac_append_many(dac *dest, dac items[], size_t items_count);
 dac dac_join(dac items[], size_t ietms_count, dac *delim);
 void dac_free(dac *s);
@@ -62,6 +63,14 @@ void dac_append(dac *dest, dac *item) {
   dac_reserve_capacity(dest, new_count);
   // copy src string at the NULL terminator of dest string
   memcpy(dest->ptr + dac_len(dest), item->ptr, item->count);
+  dest->count = new_count;
+}
+
+void dac_append_str(dac *dest, char *str) {
+  size_t new_count = dac_len(dest) + strlen(str) + 1;
+  dac_reserve_capacity(dest, new_count);
+  // copy src string at the NULL terminator of dest string
+  memcpy(dest->ptr + dac_len(dest), str, strlen(str) + 1);
   dest->count = new_count;
 }
 

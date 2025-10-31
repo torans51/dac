@@ -84,6 +84,14 @@ void test_dac_append() {
   SUCCESS();
 }
 
+void test_dac_append_str() {
+  dac s = dac_new("hello");
+  dac_append_str(&s, "world");
+  STRING_EQ(dac_to_cstr(&s), "helloworld");
+  NUMBER_EQ(dac_len(&s), strlen("helloworld"));
+  SUCCESS();
+}
+
 void test_dac_append_many() {
   dac s = dac_new("01");
   dac arr[3] = {
@@ -116,6 +124,7 @@ int main() {
 
   test_dac_new();
   test_dac_append();
+  test_dac_append_str();
   test_dac_append_many();
   test_dac_join();
   return 0;
