@@ -48,6 +48,22 @@
     }                                                                          \
   } while (0)
 
+#define BOOL_EQ(b1, b2)                                                        \
+  do {                                                                         \
+    bool condition = b1 == b2;                                                 \
+    if (!condition) {                                                          \
+      printf("\xE2\x9D\x8C %s\n", __FUNCTION__);                               \
+      printf("\t line [%d]:\n", __LINE__);                                     \
+      printf("\t\t current  -> " DAC_ANSI_COLOR_RED                            \
+             "%s\n" DAC_ANSI_COLOR_RESET,                                      \
+             b1 ? "true" : "false");                                           \
+      printf("\t\t expected -> " DAC_ANSI_COLOR_GREEN                          \
+             "%s\n" DAC_ANSI_COLOR_RESET,                                      \
+             b2 ? "true" : "false");                                           \
+      assert(!condition);                                                      \
+    }                                                                          \
+  } while (0)
+
 size_t random_num(size_t min, size_t max) { return rand() % (max - min) + min; }
 
 char *random_string(size_t length) {
@@ -72,6 +88,19 @@ void test_dac_new() {
   NUMBER_EQ(dac_len(&s2), strlen(random_str));
   free(random_str);
 
+  SUCCESS();
+}
+
+void test_dac_contains() {
+  dac s = dac_new("Hello world worldd 1234");
+  dac search1 = dac_new("ldd 1234");
+  dac search2 = dac_new("dd 12345");
+  dac search3 = dac_new("Hello world 12345");
+  dac search4 = dac_new("worldd");
+  BOOL_EQ(dac_contains(&s, &search1), true);
+  BOOL_EQ(dac_contains(&s, &search2), false);
+  BOOL_EQ(dac_contains(&s, &search3), false);
+  BOOL_EQ(dac_contains(&s, &search4), true);
   SUCCESS();
 }
 
@@ -123,6 +152,7 @@ int main() {
   srand(time(NULL));
 
   test_dac_new();
+  test_dac_contains();
   test_dac_append();
   test_dac_append_str();
   test_dac_append_many();
