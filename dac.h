@@ -19,7 +19,8 @@
 #include <string.h>
 
 typedef struct {
-  char *ptr;    // pointer to the first char of the c string. NULL terminator is included
+  char *ptr;    // pointer to the first char of the c string. NULL terminator is
+                // included
   size_t count; // len of the c string plus NULL terminator
   size_t capacity; // memory allocated >= len
 } dac;
@@ -29,6 +30,7 @@ dac dac_new(char *s);
 size_t dac_len(dac *s);
 char *dac_to_cstr(dac *s);
 void dac_append(dac *dest, dac str);
+bool dac_contains(dac *s, dac *search);
 void dac_append_str(dac *dest, char *str);
 void dac_append_many(dac *dest, dac items[], size_t items_count);
 dac dac_join(dac items[], size_t ietms_count, dac *delim);
@@ -66,6 +68,22 @@ void dac_append(dac *dest, dac item) {
   // copy src string at the NULL terminator of dest string
   memcpy(dest->ptr + dac_len(dest), item.ptr, dac_len(&item) + 1);
   dest->count = new_count;
+}
+
+bool dac_contains(dac *s, dac *search) {
+  for (size_t i = 0; i < s->count; i++) {
+    size_t j = 0;
+    if (s->ptr[i] == search->ptr[j]) {
+      while (i + j < dac_len(s) && j < dac_len(search) &&
+             s->ptr[i + j] == search->ptr[j]) {
+        j++;
+      }
+      if (j == dac_len(search)) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 void dac_append_str(dac *dest, char *str) {
