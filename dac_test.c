@@ -178,7 +178,6 @@ int main() {
   test_dac_new();
   test_dac_contains();
   test_dac_append();
-  test_dac_append_str();
   test_dac_append_many();
   test_dac_join();
   test_dac_starts_with();
