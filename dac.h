@@ -91,14 +91,6 @@ bool dac_contains(dac *s, dac *search) {
   return false;
 }
 
-void dac_append_str(dac *dest, char *str) {
-  size_t new_count = dac_len(dest) + strlen(str) + 1;
-  dac_reserve_capacity(dest, new_count);
-  // copy src string at the NULL terminator of dest string
-  memcpy(dest->ptr + dac_len(dest), str, strlen(str) + 1);
-  dest->count = new_count;
-}
-
 void dac_append_many(dac *dest, dac *items, size_t items_count) {
   size_t new_count = dac_len(dest);
   for (size_t i = 0; i < items_count; i++) {
