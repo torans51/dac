@@ -94,7 +94,7 @@ void test_dac_new() {
 void test_dac_append() {
   dac s1 = dac_new("hello");
   dac s2 = dac_new("world");
-  dac_append(&s1, &s2);
+  dac_append(&s1, s2);
   STRING_EQ(dac_to_cstr(&s1), "helloworld");
   NUMBER_EQ(dac_len(&s1), strlen("helloworld"));
   SUCCESS();
