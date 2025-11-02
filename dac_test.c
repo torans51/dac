@@ -48,6 +48,22 @@
     }                                                                          \
   } while (0)
 
+#define BOOL_EQ(b1, b2)                                                        \
+  do {                                                                         \
+    bool condition = b1 == b2;                                                 \
+    if (!condition) {                                                          \
+      printf("\xE2\x9D\x8C %s\n", __FUNCTION__);                               \
+      printf("\t line [%d]:\n", __LINE__);                                     \
+      printf("\t\t current  -> " DAC_ANSI_COLOR_RED                            \
+             "%s\n" DAC_ANSI_COLOR_RESET,                                      \
+             b1 ? "true" : "false");                                           \
+      printf("\t\t expected -> " DAC_ANSI_COLOR_GREEN                          \
+             "%s\n" DAC_ANSI_COLOR_RESET,                                      \
+             b2 ? "true" : "false");                                           \
+      assert(!condition);                                                      \
+    }                                                                          \
+  } while (0)
+
 size_t random_num(size_t min, size_t max) { return rand() % (max - min) + min; }
 
 char *random_string(size_t length) {
@@ -119,6 +135,30 @@ void test_dac_join() {
   SUCCESS();
 }
 
+void test_dac_starts_with() {
+  dac s = dac_new("Hello world");
+  dac prefix1 = dac_new("Hello w");
+  dac prefix2 = dac_new("Hello world2");
+  dac prefix3 = dac_new("");
+
+  BOOL_EQ(dac_starts_with(&s, prefix1), true);
+  BOOL_EQ(dac_starts_with(&s, prefix2), false);
+  BOOL_EQ(dac_starts_with(&s, prefix3), false);
+  SUCCESS();
+}
+
+
+void test_dac_ends_with() {
+  dac s = dac_new("Hello world");
+  dac suffix1 = dac_new("o world");
+  dac suffix2 = dac_new("1Hello world");
+  dac suffix3 = dac_new("");
+
+  BOOL_EQ(dac_ends_with(&s, suffix1), true);
+  BOOL_EQ(dac_ends_with(&s, suffix2), false);
+  BOOL_EQ(dac_ends_with(&s, suffix3), false);
+  SUCCESS();
+}
 int main() {
   srand(time(NULL));
 
@@ -127,5 +167,7 @@ int main() {
   test_dac_append_str();
   test_dac_append_many();
   test_dac_join();
+  test_dac_starts_with();
+  test_dac_ends_with();
   return 0;
 }

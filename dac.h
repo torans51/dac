@@ -19,8 +19,9 @@
 #include <string.h>
 
 typedef struct {
-  char *ptr; // pointer to the first char of the c string. NULL terminator is included
-  size_t count;    // len of the c string plus NULL terminator
+  char *ptr;    // pointer to the first char of the c string. NULL terminator is
+                // included
+  size_t count; // len of the c string plus NULL terminator
   size_t capacity; // memory allocated >= len
 } dac;
 
@@ -34,6 +35,8 @@ void dac_append_many(dac *dest, dac items[], size_t items_count);
 dac dac_join(dac items[], size_t ietms_count, dac *delim);
 void dac_free(dac *s);
 void dac_free_many(dac *s, size_t count);
+bool dac_starts_with(dac *s, dac prefix);
+bool dac_ends_with(dac *s, dac suffix);
 /******************************************************************************/
 
 /* Private ********************************************************************/
@@ -110,6 +113,38 @@ void dac_free_many(dac items[], size_t items_count) {
   for (size_t i = 0; i < items_count; i++) {
     free(items[i].ptr);
   }
+}
+
+bool dac_starts_with(dac *s, dac prefix) {
+  if (dac_len(&prefix) == 0) {
+    return dac_len(s) == dac_len(&prefix);
+  }
+
+  bool starts_with = true;
+  for (size_t i = 0; i < dac_len(&prefix); i++) {
+    if (i < dac_len(s) && s->ptr[i] == prefix.ptr[i]) {
+      continue;
+    }
+    return false;
+  }
+  return starts_with;
+}
+
+bool dac_ends_with(dac *s, dac suffix) {
+  if (dac_len(&suffix) == 0) {
+    return dac_len(s) == dac_len(&suffix);
+  }
+
+  bool ends_with = true;
+  for (size_t i = 0; i < dac_len(&suffix); i++) {
+    if (dac_len(s) - 1 - (dac_len(&suffix) - 1) + i > 0 &&
+        dac_len(s) - 1 - (dac_len(&suffix) - 1) + i < dac_len(s) &&
+        s->ptr[dac_len(s) - 1 - (dac_len(&suffix) - 1) + i] == suffix.ptr[i]) {
+      continue;
+    }
+    return false;
+  }
+  return ends_with;
 }
 
 void dac_reserve_capacity(dac *s, size_t expected_capacity) {
