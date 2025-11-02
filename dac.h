@@ -31,11 +31,10 @@ dac dac_new(char *s);
 size_t dac_len(dac *s);
 char *dac_to_cstr(dac *s);
 void dac_append(dac *dest, dac str);
-bool dac_contains(dac *s, dac *search);
+bool dac_contains(dac *s, dac search);
 // TODO:
 // void dac_replace(dac *s, dac *r);
 // void dac_replace_all(dac *s, dac *r);
-void dac_append_str(dac *dest, char *str);
 void dac_append_many(dac *dest, dac items[], size_t items_count);
 dac dac_join(dac items[], size_t ietms_count, dac *delim);
 void dac_free(dac *s);
@@ -74,13 +73,17 @@ void dac_append(dac *dest, dac item) {
   dest->count = new_count;
 }
 
-bool dac_contains(dac *s, dac *search) {
-  for (size_t i = 0; i < s->count; i++) {
+bool dac_contains(dac *s, dac search) {
+  char *s_str = dac_to_cstr(s);
+  size_t s_len = dac_len(s);
+  char *search_str = dac_to_cstr(&search);
+  size_t search_len = dac_len(&search);
+
+  for (size_t i = 0; i < s_len; i++) {
     size_t j = 0;
-    size_t search_len = dac_len(search);
-    if (s->ptr[i] == search->ptr[j]) {
-      while (i + j < dac_len(s) && j < search_len &&
-             s->ptr[i + j] == search->ptr[j]) {
+    if (s->ptr[i] == search.ptr[j]) {
+      while (i + j < s_len && j < search_len &&
+             s_str[i + j] == search_str[j]) {
         j++;
       }
       if (j == search_len) {

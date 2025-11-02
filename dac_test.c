@@ -15,24 +15,26 @@
 #define DAC_ANSI_COLOR_CYAN "\x1b[36m"
 #define DAC_ANSI_COLOR_RESET "\x1b[0m"
 
-#define SUCCESS() printf("\xE2\x9C\x85 %s\n", __FUNCTION__);
-#define EXPECT_STRING_EQ(s1, s2)                                                      \
-  do {                                                                         \
-    bool condition = strcmp(s1, s2) == 0;                                      \
-    if (!condition) {                                                          \
-      printf("\xE2\x9D\x8C %s\n", __FUNCTION__);                               \
-      printf("\t line [%d]:\n", __LINE__);                                     \
-      printf("\t\t current  -> " DAC_ANSI_COLOR_RED                            \
-             "'%s'\n" DAC_ANSI_COLOR_RESET,                                    \
-             s1);                                                              \
-      printf("\t\t expected -> " DAC_ANSI_COLOR_GREEN                          \
-             "'%s'\n" DAC_ANSI_COLOR_RESET,                                    \
-             s2);                                                              \
-      assert(!condition);                                                      \
-    }                                                                          \
+#define SUCCESS printf("\xE2\x9C\x85 %s\n", __FUNCTION__);
+
+
+#define EXPECT_STRING_EQ(s1, s2) \
+  do { \
+    bool condition = strcmp(s1, s2) == 0; \
+    if (!condition) { \
+      printf("\xE2\x9D\x8C %s\n", __FUNCTION__); \
+      printf("\t line [%d]:\n", __LINE__); \
+      printf("\t\t current  -> " DAC_ANSI_COLOR_RED \
+             "'%s'\n" DAC_ANSI_COLOR_RESET, \
+             s1); \
+      printf("\t\t expected -> " DAC_ANSI_COLOR_GREEN \
+             "'%s'\n" DAC_ANSI_COLOR_RESET, \
+             s2); \
+      assert(!condition); \
+    } \
   } while (0)
 
-#define EXPECT_NUMBER_EQ(n1, n2)                                                      \
+#define EXPECT_NUMBER_EQ(n1, n2)                                               \
   do {                                                                         \
     bool condition = n1 == n2;                                                 \
     if (!condition) {                                                          \
@@ -48,7 +50,7 @@
     }                                                                          \
   } while (0)
 
-#define EXPECT_BOOL_EQ(b1, b2)                                                        \
+#define EXPECT_BOOL_EQ(b1, b2)                                                 \
   do {                                                                         \
     bool condition = b1 == b2;                                                 \
     if (!condition) {                                                          \
@@ -88,7 +90,7 @@ void test_dac_new() {
   EXPECT_NUMBER_EQ(dac_len(&s2), strlen(random_str));
   free(random_str);
 
-  SUCCESS();
+  SUCCESS;
 }
 
 void test_dac_contains() {
@@ -97,11 +99,11 @@ void test_dac_contains() {
   dac search2 = dac_new("dd 12345");
   dac search3 = dac_new("Hello world 12345");
   dac search4 = dac_new("worldd");
-  EXPECT_BOOL_EQ(dac_contains(&s, &search1), true);
-  EXPECT_BOOL_EQ(dac_contains(&s, &search2), false);
-  EXPECT_BOOL_EQ(dac_contains(&s, &search3), false);
-  EXPECT_BOOL_EQ(dac_contains(&s, &search4), true);
-  SUCCESS();
+  EXPECT_BOOL_EQ(dac_contains(&s, search1), true);
+  EXPECT_BOOL_EQ(dac_contains(&s, search2), false);
+  EXPECT_BOOL_EQ(dac_contains(&s, search3), false);
+  EXPECT_BOOL_EQ(dac_contains(&s, search4), true);
+  SUCCESS;
 }
 
 void test_dac_append() {
@@ -112,7 +114,7 @@ void test_dac_append() {
   EXPECT_NUMBER_EQ(dac_len(&s1), strlen("helloworld"));
   EXPECT_STRING_EQ(dac_to_cstr(&s1), "helloworld");
   EXPECT_NUMBER_EQ(dac_len(&s1), strlen("helloworld"));
-  SUCCESS();
+  SUCCESS;
 }
 
 void test_dac_append_many() {
@@ -125,7 +127,7 @@ void test_dac_append_many() {
   dac_append_many(&s, arr, 3);
   EXPECT_STRING_EQ(dac_to_cstr(&s), "0123456789abcdef");
   EXPECT_NUMBER_EQ(dac_len(&s), strlen("0123456789abcdef"));
-  SUCCESS();
+  SUCCESS;
 }
 
 void test_dac_join() {
@@ -139,7 +141,7 @@ void test_dac_join() {
   dac s = dac_join(arr, DAC_ARRAY_LEN(arr), &delim);
   EXPECT_STRING_EQ(dac_to_cstr(&s), "1,.,2,.,3,.,4");
   EXPECT_NUMBER_EQ(dac_len(&s), strlen("1,.,2,.,3,.,4"));
-  SUCCESS();
+  SUCCESS;
 }
 
 void test_dac_starts_with() {
@@ -151,9 +153,8 @@ void test_dac_starts_with() {
   EXPECT_BOOL_EQ(dac_starts_with(&s, prefix1), true);
   EXPECT_BOOL_EQ(dac_starts_with(&s, prefix2), false);
   EXPECT_BOOL_EQ(dac_starts_with(&s, prefix3), false);
-  SUCCESS();
+  SUCCESS;
 }
-
 
 void test_dac_ends_with() {
   dac s = dac_new("Hello world");
@@ -164,7 +165,7 @@ void test_dac_ends_with() {
   EXPECT_BOOL_EQ(dac_ends_with(&s, suffix1), true);
   EXPECT_BOOL_EQ(dac_ends_with(&s, suffix2), false);
   EXPECT_BOOL_EQ(dac_ends_with(&s, suffix3), false);
-  SUCCESS();
+  SUCCESS;
 }
 int main() {
   srand(time(NULL));
