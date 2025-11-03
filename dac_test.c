@@ -64,8 +64,6 @@ char *random_string(size_t length) {
 
 void test_dac_new() {
   dac s1 = dac_new("world");
-  EXPECT_STRING_EQ(s1.ptr, "world");
-  EXPECT_NUMBER_EQ(s1.count, strlen("world") + 1);
   EXPECT_STRING_EQ(dac_to_cstr(&s1), "world");
   EXPECT_NUMBER_EQ(dac_len(&s1), strlen("world"));
 
@@ -80,25 +78,20 @@ void test_dac_new() {
 
 void test_dac_contains() {
   dac s = dac_new("Hello world worldd 1234");
-  dac search1 = dac_new("ldd 1234");
-  dac search2 = dac_new("dd 12345");
-  dac search3 = dac_new("Hello world 12345");
-  dac search4 = dac_new("worldd");
-  EXPECT_BOOL_EQ(dac_contains(&s, search1), true);
-  EXPECT_BOOL_EQ(dac_contains(&s, search2), false);
-  EXPECT_BOOL_EQ(dac_contains(&s, search3), false);
-  EXPECT_BOOL_EQ(dac_contains(&s, search4), true);
+  EXPECT_BOOL_EQ(dac_contains(&s, dac_new("ldd 1234")), true);
+  EXPECT_BOOL_EQ(dac_contains(&s, dac_new("dd 12345")), false);
+  EXPECT_BOOL_EQ(dac_contains(&s, dac_new("Hello world 12345")), false);
+  EXPECT_BOOL_EQ(dac_contains(&s, dac_new("worldd")), true);
   SUCCESS;
 }
 
 void test_dac_append() {
-  dac s1 = dac_new("hello");
-  dac s2 = dac_new("world");
-  dac_append(&s1, s2);
-  EXPECT_STRING_EQ(dac_to_cstr(&s1), "helloworld");
-  EXPECT_NUMBER_EQ(dac_len(&s1), strlen("helloworld"));
-  EXPECT_STRING_EQ(dac_to_cstr(&s1), "helloworld");
-  EXPECT_NUMBER_EQ(dac_len(&s1), strlen("helloworld"));
+  dac s = dac_new("hello");
+  dac_append(&s, dac_new("world"));
+  EXPECT_STRING_EQ(dac_to_cstr(&s), "helloworld");
+  EXPECT_NUMBER_EQ(dac_len(&s), strlen("helloworld"));
+  EXPECT_STRING_EQ(dac_to_cstr(&s), "helloworld");
+  EXPECT_NUMBER_EQ(dac_len(&s), strlen("helloworld"));
   SUCCESS;
 }
 
@@ -122,8 +115,7 @@ void test_dac_join() {
       dac_new("3"),
       dac_new("4"),
   };
-  dac delim = dac_new(",.,");
-  dac s = dac_join(arr, DAC_ARRAY_LEN(arr), &delim);
+  dac s = dac_join(arr, DAC_ARRAY_LEN(arr), dac_new(",.,"));
   EXPECT_STRING_EQ(dac_to_cstr(&s), "1,.,2,.,3,.,4");
   EXPECT_NUMBER_EQ(dac_len(&s), strlen("1,.,2,.,3,.,4"));
   SUCCESS;
@@ -131,25 +123,19 @@ void test_dac_join() {
 
 void test_dac_starts_with() {
   dac s = dac_new("Hello world");
-  dac prefix1 = dac_new("Hello w");
-  dac prefix2 = dac_new("Hello world2");
-  dac prefix3 = dac_new("");
 
-  EXPECT_BOOL_EQ(dac_starts_with(&s, prefix1), true);
-  EXPECT_BOOL_EQ(dac_starts_with(&s, prefix2), false);
-  EXPECT_BOOL_EQ(dac_starts_with(&s, prefix3), false);
+  EXPECT_BOOL_EQ(dac_starts_with(&s, dac_new("Hello w")), true);
+  EXPECT_BOOL_EQ(dac_starts_with(&s, dac_new("Hello world2")), false);
+  EXPECT_BOOL_EQ(dac_starts_with(&s, dac_new("")), false);
   SUCCESS;
 }
 
 void test_dac_ends_with() {
   dac s = dac_new("Hello world");
-  dac suffix1 = dac_new("o world");
-  dac suffix2 = dac_new("1Hello world");
-  dac suffix3 = dac_new("");
 
-  EXPECT_BOOL_EQ(dac_ends_with(&s, suffix1), true);
-  EXPECT_BOOL_EQ(dac_ends_with(&s, suffix2), false);
-  EXPECT_BOOL_EQ(dac_ends_with(&s, suffix3), false);
+  EXPECT_BOOL_EQ(dac_ends_with(&s, dac_new("o world")), true);
+  EXPECT_BOOL_EQ(dac_ends_with(&s, dac_new("1Hello world")), false);
+  EXPECT_BOOL_EQ(dac_ends_with(&s, dac_new("")), false);
   SUCCESS;
 }
 int main() {

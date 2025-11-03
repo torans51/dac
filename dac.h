@@ -36,7 +36,7 @@ bool dac_contains(dac *s, dac search);
 // void dac_replace(dac *s, dac *r);
 // void dac_replace_all(dac *s, dac *r);
 void dac_append_many(dac *dest, dac items[], size_t items_count);
-dac dac_join(dac items[], size_t ietms_count, dac *delim);
+dac dac_join(dac items[], size_t ietms_count, dac delim);
 void dac_free(dac *s);
 void dac_free_many(dac items[], size_t count);
 bool dac_starts_with(dac *s, dac prefix);
@@ -109,14 +109,14 @@ void dac_append_many(dac *dest, dac *items, size_t items_count) {
   dest->count = new_count;
 }
 
-dac dac_join(dac *items, size_t items_count, dac *delim) {
+dac dac_join(dac *items, size_t items_count, dac delim) {
   dac arr[items_count * 2 - 1];
   size_t arr_len = DAC_ARRAY_LEN(arr);
   for (size_t i = 0; i < arr_len; i++) {
     if (i % 2 == 0) {
       arr[i] = items[i / 2];
     } else {
-      arr[i] = *delim;
+      arr[i] = delim;
     }
   }
   dac new_str = dac_new("");
