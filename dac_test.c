@@ -17,53 +17,38 @@
 
 #define SUCCESS printf("\xE2\x9C\x85 %s\n", __FUNCTION__);
 
-
-#define EXPECT_STRING_EQ(s1, s2) \
-  do { \
-    bool condition = strcmp(s1, s2) == 0; \
-    if (!condition) { \
-      printf("\xE2\x9D\x8C %s\n", __FUNCTION__); \
-      printf("\t line [%d]:\n", __LINE__); \
-      printf("\t\t current  -> " DAC_ANSI_COLOR_RED \
-             "'%s'\n" DAC_ANSI_COLOR_RESET, \
-             s1); \
-      printf("\t\t expected -> " DAC_ANSI_COLOR_GREEN \
-             "'%s'\n" DAC_ANSI_COLOR_RESET, \
-             s2); \
-      assert(!condition); \
-    } \
-  } while (0)
-
-#define EXPECT_NUMBER_EQ(n1, n2)                                               \
+#define EXPECT_EQ(s1, s2, condition, format)                                   \
   do {                                                                         \
-    bool condition = n1 == n2;                                                 \
-    if (!condition) {                                                          \
+    if (!(condition)) {                                                        \
       printf("\xE2\x9D\x8C %s\n", __FUNCTION__);                               \
       printf("\t line [%d]:\n", __LINE__);                                     \
-      printf("\t\t current  -> " DAC_ANSI_COLOR_RED                            \
-             "%ld\n" DAC_ANSI_COLOR_RESET,                                     \
-             n1);                                                              \
-      printf("\t\t expected -> " DAC_ANSI_COLOR_GREEN                          \
-             "%ld\n" DAC_ANSI_COLOR_RESET,                                     \
-             n2);                                                              \
-      assert(!condition);                                                      \
+                                                                               \
+      printf("\t\t current  -> " DAC_ANSI_COLOR_RED);                          \
+      printf((format), s1);                                                    \
+      printf("\n" DAC_ANSI_COLOR_RESET);                                       \
+      printf("\t\t expected -> " DAC_ANSI_COLOR_GREEN);                        \
+      printf((format), s2);                                                    \
+      printf("\n" DAC_ANSI_COLOR_RESET);                                       \
+                                                                               \
+      assert(!(condition));                                                    \
     }                                                                          \
   } while (0)
 
-#define EXPECT_BOOL_EQ(b1, b2)                                                 \
+#define EXPECT_STRING_EQ(e1, e2)                                               \
   do {                                                                         \
-    bool condition = b1 == b2;                                                 \
-    if (!condition) {                                                          \
-      printf("\xE2\x9D\x8C %s\n", __FUNCTION__);                               \
-      printf("\t line [%d]:\n", __LINE__);                                     \
-      printf("\t\t current  -> " DAC_ANSI_COLOR_RED                            \
-             "%s\n" DAC_ANSI_COLOR_RESET,                                      \
-             b1 ? "true" : "false");                                           \
-      printf("\t\t expected -> " DAC_ANSI_COLOR_GREEN                          \
-             "%s\n" DAC_ANSI_COLOR_RESET,                                      \
-             b2 ? "true" : "false");                                           \
-      assert(!condition);                                                      \
-    }                                                                          \
+    EXPECT_EQ(e1, e2, strcmp(e1, e2) == 0, "'%s'");                            \
+  } while (0)
+
+#define EXPECT_NUMBER_EQ(e1, e2)                                               \
+  do {                                                                         \
+    EXPECT_EQ(e1, e2, e1 == e2, "%ld");                                        \
+  } while (0)
+
+#define EXPECT_BOOL_EQ(e1, e2)                                                 \
+  do {                                                                         \
+    char *s1 = e1 ? "true" : "false";                                          \
+    char *s2 = e2 ? "true" : "false";                                          \
+    EXPECT_EQ(s1, s2, e1 == e2, "'%s'");                                       \
   } while (0)
 
 size_t random_num(size_t min, size_t max) { return rand() % (max - min) + min; }

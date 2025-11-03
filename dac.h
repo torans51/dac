@@ -38,7 +38,7 @@ bool dac_contains(dac *s, dac search);
 void dac_append_many(dac *dest, dac items[], size_t items_count);
 dac dac_join(dac items[], size_t ietms_count, dac *delim);
 void dac_free(dac *s);
-void dac_free_many(dac *s, size_t count);
+void dac_free_many(dac items[], size_t count);
 bool dac_starts_with(dac *s, dac prefix);
 bool dac_ends_with(dac *s, dac suffix);
 /******************************************************************************/
