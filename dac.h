@@ -28,6 +28,7 @@ typedef struct {
 
 /* Public *********************************************************************/
 dac dac_new(char *s);
+void dac_init(dac *s, char *str);
 size_t dac_len(dac s);
 char *dac_to_cstr(dac s);
 bool dac_eq(dac s1, dac s2);
@@ -55,12 +56,19 @@ void dac_reserve_capacity(dac *s, size_t expected_capacity);
 #define DAC_ARRAY_LEN(a) (sizeof(a) / sizeof(a[0]))
 
 dac dac_new(char *s) {
-  dac str = {0};
+  dac d = {0};
   size_t len = strlen(s) + 1;
-  dac_reserve_capacity(&str, len);
-  memcpy(str.ptr, s, len);
-  str.count = len;
-  return str;
+  dac_reserve_capacity(&d, len);
+  memcpy(d.ptr, s, len);
+  d.count = len;
+  return d;
+}
+
+void dac_init(dac *d, char *s) {
+  size_t count = strlen(s) + 1;
+  dac_reserve_capacity(d, count);
+  memcpy(d->ptr, s, count);
+  d->count = count;
 }
 
 size_t dac_len(dac s) { return s.count - 1; }
@@ -131,15 +139,15 @@ void dac_replace(dac *s, dac search, dac item) {
   if (start >= 0) {
     int delta = dac_len(item) - dac_len(search);
     if (delta > 0) {
-      dac_reserve_capacity(s, dac_len(*s) + (dac_len(item) - dac_len(search)) +
-                                  1);
-      memmove(s->ptr + start + dac_len(item),
-              s->ptr + start + dac_len(search), dac_len(*s) + 1 - delta);
+      dac_reserve_capacity(s,
+                           dac_len(*s) + (dac_len(item) - dac_len(search)) + 1);
+      memmove(s->ptr + start + dac_len(item), s->ptr + start + dac_len(search),
+              dac_len(*s) + 1 - delta);
       memcpy(s->ptr + start, item.ptr, dac_len(item));
     } else if (delta < 0) {
       memcpy(s->ptr + start, item.ptr, dac_len(item));
-      memmove(s->ptr + start + dac_len(item),
-              s->ptr + start + dac_len(search), dac_len(*s) + 1 + delta);
+      memmove(s->ptr + start + dac_len(item), s->ptr + start + dac_len(search),
+              dac_len(*s) + 1 + delta);
     } else {
       memcpy(s->ptr + start, item.ptr, dac_len(item));
     }
@@ -203,7 +211,7 @@ bool dac_starts_with(dac s, dac prefix) {
 }
 
 bool dac_ends_with(dac s, dac suffix) {
-  size_t s_len  = dac_len(s);
+  size_t s_len = dac_len(s);
   size_t suffix_len = dac_len(suffix);
   if (suffix_len == 0) {
     return s_len == suffix_len;

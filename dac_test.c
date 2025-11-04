@@ -116,6 +116,15 @@ void test_dac_new() {
   SUCCESS;
 }
 
+void test_dac_init() {
+  dac s = {0};
+  dac_init(&s, "HeLlo");
+  EXPECT_STRING_EQ(dac_to_cstr(s), "HeLlo");
+  EXPECT_UINT_EQ(dac_len(s), strlen("HeLlo"));
+
+  SUCCESS;
+}
+
 void test_dac_eq() {
   EXPECT_BOOL_EQ(dac_eq(dac_new("hello"), dac_new("hello")), true);
   EXPECT_BOOL_EQ(dac_eq(dac_new("hello"), dac_new("hell")), false);
@@ -224,6 +233,7 @@ int main() {
   srand(time(NULL));
 
   test_dac_new();
+  test_dac_init();
   test_dac_eq();
   test_dac_contains();
   test_dac_find();
